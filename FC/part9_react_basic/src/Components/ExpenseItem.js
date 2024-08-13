@@ -6,12 +6,15 @@ export class ExpenseItem extends Component {
     return (
       <li className='item'>
         <div className='info'>
-            <span className='expense'></span>
-            <span className='amount'> 원</span>
+            <span className='expense'>{this.props.expense.charge}</span>
+            <span className='amount'>{this.props.expense.amount}</span>
         </div>
         <div>
             <button className='edit-btn'> <MdEdit/> </button>
-            <button className='clear-btn'> <MdDelete/> </button>
+            <button className='clear-btn' 
+            onClick={() =>
+            this.props.handleDelete(this.props.expense.id)}> 
+            <MdDelete/> </button>
         </div>
       </li>
     )
