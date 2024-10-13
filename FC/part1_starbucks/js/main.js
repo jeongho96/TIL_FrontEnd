@@ -40,3 +40,14 @@ window.addEventListener('scroll', _.throttle(function(){
         })
     }
 }, 300));
+
+
+// visual 영역의 fade-in 순차처리
+const fadeEls = document.querySelectorAll('.visual .fade-in');
+
+fadeEls.forEach(function(fadeEl, index){
+    gsap.to(fadeEl, 1, {
+        delay: (index + 1) * .7, // 각 요소들이 순차적으로 0.7초마다 수행
+        opacity: 1
+    });
+});
