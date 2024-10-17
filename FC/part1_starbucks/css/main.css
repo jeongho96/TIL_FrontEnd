@@ -622,54 +622,54 @@ header .badges {
 /*SEASON PRODUCT*/
 .season-product {
     background-image: url("../images/season_product_bg.jpg");
-  }
-  .season-product .inner {
+}
+    .season-product .inner {
     height: 400px;
-  }
-  .season-product .floating3 {
+}
+.season-product .floating3 {
     position: absolute;
     top: -200px;
     right: 0;
-  }
-  .season-product .text-group {
+}
+.season-product .text-group {
     position: absolute;
     top: 110px;
     right: 100px;
-  }
-  .season-product .text-group .title {
+}
+.season-product .text-group .title {
     margin-bottom: 10px;
-  }
-  .season-product .text-group .description {
+}
+.season-product .text-group .description {
     margin-bottom: 15px;
-  }
-  
-  
-  /*RESERVE COFFEE*/
-  .reserve-coffee {
-    background-image: url("../images/reserve_bg.jpg");
-  }
-  .reserve-coffee .inner {
+}
+
+
+/*RESERVE COFFEE*/
+.reserve-coffee {
+    background-image: url("../images/reserve_bg.jpg");  
+}
+.reserve-coffee .inner {
     height: 400px;
-  }
-  .reserve-coffee .reserve-logo {
+}
+.reserve-coffee .reserve-logo {
     position: absolute;
     top: 110px;
     left: 0;
-  }
-  .reserve-coffee .text-group {
+}
+.reserve-coffee .text-group {
     position: absolute;
     top: 124px;
     left: 208px;
-  }
-  .reserve-coffee .product {
+}
+.reserve-coffee .product {
     position: absolute;
     top: 0;
     right: 0;
-  }
+}
 
 
 
-  /*PICK YOUR FAVORITE*/
+/*PICK YOUR FAVORITE*/
 .pick-your-favorite {
     /* 배경 이미지를 스크롤과 상관없이 고정되게 */
     background-image: url("../images/favorite_bg.jpg");
@@ -677,21 +677,76 @@ header .badges {
     background-position: center;
     background-attachment: fixed;
     background-size: cover;
-  }
-  .pick-your-favorite .inner {
+}
+.pick-your-favorite .inner {
     padding: 110px 0;
-  }
-  .pick-your-favorite .text-group {
+}
+.pick-your-favorite .text-group {
     width: 362px;
     margin-left: 100px;
     display: flex;
     justify-content: flex-end;
     flex-wrap: wrap;
-  }
-  .pick-your-favorite .text-group .title {
+}
+.pick-your-favorite .text-group .title {
     margin-bottom: 40px;
-  }
-  .pick-your-favorite .text-group .description {
+}
+.pick-your-favorite .text-group .description {
     margin-bottom: 40px;
-  }
-  
+}
+
+
+
+
+/*RESERVE STORE*/
+.reserve-store {
+    background-image: url("../images/reserve_store_bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+}
+.reserve-store .inner {
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.reserve-store .medal {
+    width: 334px;
+    height: 334px;
+    perspective: 600px;
+}
+
+.reserve-store .medal .front,
+.reserve-store .medal .back {
+    width: inherit;
+    height: inherit;
+    /* 여기서는 absolute를 통해 요소를 서로 겹치게 만듬 */
+    position: absolute;
+    transition: 1s;
+    /* 뒷면이 안보이게 만들기 */
+    backface-visibility: hidden;
+}
+.reserve-store .medal .front {
+    /* 없으면 구형 브라우저에서 문제 발생할 수 있음. */
+    transform: rotateY(0deg);
+}
+.reserve-store .medal:hover .front {
+    transform: rotateY(180deg);
+}
+.reserve-store .medal .back {
+    transform: rotateY(-180deg);
+}
+.reserve-store .medal:hover .back {
+    transform: rotateY(0deg);
+}
+.reserve-store .medal .back .btn {
+    position: absolute;
+    top: 240px;
+    /* 가운데 배치하려면 가로너비가 있어야 하는데 
+    공통 btn에 있으므로 추가 설정 x */
+    left: 0;
+    right: 0;
+    margin: auto;
+}
