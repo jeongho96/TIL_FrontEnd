@@ -1,0 +1,32 @@
+{
+    // 컴파일 시 옵션션
+    "comfileOptions" : {
+        // 컴파일 되는 곳
+        "rootDir" : "./src",
+        // 빌드한 결과물이 나오는 곳
+        "outDir" : "./build/js",
+        // js 적용 버전
+        "target" : "ES6",
+        // 에러가 있을 때는 적용하지 않음.
+        "noEmitOnError" : true,
+        // 컴파일 이후에 사용될 JS 버전(ES6 이후가 ESNext)
+        "module" : "ESNext",
+        //
+        "moduleResolution" : "Node",
+        // esModule과 CommonJS를 혼용 사용 가능
+        "esModuleInterop": true,
+        // 컴파일 과정에서 사용하는 lib 지정
+        "lib" : ["ESNext", "DOM"],
+        // ts의 파일의 타입을 엄격히 사용할 것인지 여부
+        "strict" : true,
+        
+    },
+    // 컴파일 적용 폴더 명시(이외는 적용되지 않음)
+    "include": [
+        "./src/**/*.ts"
+    ],
+
+    "exclude" : [ // 컴파일 시 제외
+        "node_modules",
+    ]
+}
