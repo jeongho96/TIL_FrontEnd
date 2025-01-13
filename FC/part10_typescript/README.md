@@ -131,4 +131,100 @@ tsc -w
 
 ```
 
+## 1.6 타입 단언(type assetion) 과 타입 Guard
+- 타입 단언은 말그대로 컴퓨터에게 타입을 내가 설정하고 그에 대해 유추하지 않도록 하는 것을 의미한다.
 
+예시
+
+```ts
+// 에러
+var foo = {};
+foo.bar = 123;
+foo.bas = 'hello
+
+// 타입 단언 사용
+interface Foo{
+    bar: number;
+    bas: string;
+}
+
+var foo = {} as Foo;
+foo.bar = 123;
+foo.bas = 'hello'
+
+```
+
+## 1.7 type alias vs interface
+타입 별칭과 인터페이스는 타입의 이름을 지정하는 방법으로 방법이 매우 유사하며 자유롭게 선택 가능하다.
+
+```ts
+
+interface People{
+    name: string
+    age: number
+}
+
+const me: People = {
+    name: 'john',
+    age: 50
+}
+
+type People = {
+    name: string
+    age: number
+}
+
+```
+
+- 차이점은 확장 방식에 있다.
+- interface는 뒤에 extends를 붙여 확장하고,
+- type 확장은 뒤에 &(intersection)을 붙여서 확장한다.
+- 또한 같은 이름으로 2번 선언하게 되면, interface의 경우 속성이 다르다면 병합되서 생성 가능.
+- type의 경우에는 선언 병합이 불가능하다.
+
+```ts
+interface Animal{
+    name: string;
+}
+
+interface Bear extends Animal{
+    honey: boolean
+}
+
+// type
+type Animal = {
+    name: string;
+}
+
+type Bear = Animal & {
+    honey: boolean
+}
+
+const bear1: Bear = {
+    name: 'honey bear',
+    honey: true
+}
+
+
+```
+
+
+- 공통점은 둘다 implement를 사용가능하며, union 유형을 사용해 새로운 type 혹은 인터페이스를 만들 수 있다.
+
+```ts
+interface Animal{
+    name: string
+}
+
+interface Bear{
+    honey: true
+}
+
+type NewType = Animal | Bear;
+
+const bear1: NewType = {
+    name: 'honey bear',
+    honey: true
+}
+
+```
