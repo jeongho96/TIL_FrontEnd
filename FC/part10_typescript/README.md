@@ -228,3 +228,140 @@ const bear1: NewType = {
 }
 
 ```
+
+## 1.8 호출 시그니처, 인덱스 시그니처
+
+호출 시그니처는 말 그대로 함수의 호출 형태를 미리 선언하는 형태를 의미한다.
+- 형태는 다음과 같다. interface 내부에 `(매개변수 : 타입) : 반환타입`을 적는다.
+
+```ts
+interface getLikeNumber{
+    (like: number): number;
+}
+
+
+interface Post{
+    id: number;
+    title: string;
+    getLikeNumber: getLikeNumber
+}
+
+
+const post1: Post = {
+    id: 1,
+    title: 'post1',
+    getLikeNumber(like:number){
+        return like
+    }
+}
+
+// 호출 시그니처가 없어서 에러 발생
+// 맨 위에 호출 시그니처를 만들어줘야 함.
+post1.getLikeNumber(1);
+
+```
+
+인덱스 시그니처는 배열과 객체를 위한 인덱스 시그니처 2개가 있다.
+
+- 객체의 경우 변수명(key 부분) 부분과 그에 대한 속성을 정의해주는 파트
+- 배열의 경우 인덱스와 들어갈 변수의 타입을 지정해주는 방식을 선언한다.
+```ts
+// 인덱스 시그니처
+
+interface Post2{
+    [key: string] : unknown;
+    id: number;
+    title: string;
+}
+
+const post2 = {
+    id: 1,
+    title: 'post 2',
+}
+
+// 위에서 정의한 속성 이외에 추가해야할 속성이 더 있다면
+// 위처럼 key와 value에 대해서 시그니처를 정의하면 에러가 나지 않는다.
+post2['description'] = 'description2'
+
+
+// 배열 인덱스 시그니처
+interface Names{
+    [item: number]: string;
+}
+
+const userNames: Names = ['John', 'kim', 'Joe']
+
+// 인덱스가 item 부분에 해당.
+userNames[0] === 'John'
+
+```
+
+
+
+
+## 1.9 함수 오버로딩
+매개변수의 타입이 다르거나 할 때, 오버로딩을 사용해서 다른 함수 여러 개를 한 번에 합쳐줄 수 있다.
+- 유니온을 활용해서 필요한 경우를 선언해줄 수 있지만, 가짓수가 늘어나면 매번 추가해줘야해서 귀찮은 점이 있다.
+- 따라서 오버로딩을 활용하는걸 권장한다.
+
+```ts
+// 기본적인 구조가 같지만 매개변수나 반환 값이 다를 때 하나로 합쳐줄 수 있음.
+
+function saySomething(word: string | string[]): string{
+    if(typeof word === "string"){
+        return word
+    }
+
+    else if(Array.isArray(word)){
+        return word.join(" ");
+    }
+
+    throw new Error("unable to say something");
+}
+
+
+
+saySomething(['hello', 'world']);
+
+// 위 함수를 오버로딩을 활용
+
+function saySomething2(word: string) : string;
+function saySomething2(word: string[]) : string;
+
+function saySomething2(word: any) : any{
+    if(typeof word === "string"){
+        return word
+    }
+
+    else if(Array.isArray(word)){
+        return word.join(" ");
+    }
+
+    throw new Error("unable to say something");
+}
+
+
+
+```
+
+## 1.10 접근제어자
+ts에서는 class에서 변수 생성시 그 변수에 대해서 안에서 미리 선언을 해줘야 함.
+접근 제어자는 크게 public, protected, private 존재.
+
+```ts
+class Post{
+    constructor(
+        private id: number = 9,
+        protected title: string = ''
+    ){
+
+    }
+
+    getPost() {
+        return `postId ${this.id}, postTitle: ${this.title}`;
+    }
+}
+
+const post: Post = new Post(1, "title 1");
+
+```
