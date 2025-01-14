@@ -12,6 +12,27 @@
 
 [1.5 ts 설정](#15-ts-개발-환경-구성-및-tsconfigjson)
 
+[1.6 타입 단언과 타입 가드](#16-타입-단언type-assetion-과-타입-guard)
+
+[1.7 type vs interface](#17-type-alias-vs-interface)
+
+[1.8 호출, 인덱스 시그니처처](#18-호출-시그니처-인덱스-시그니처)
+
+[1.9 함수 오버로딩](#19-함수-오버로딩)
+
+[1.10 접근제어자](#110-접근제어자)
+
+[1.11 제네릭](#111-generic-정의-및-활용법)
+
+[1.12 유틸리티 타입](#112-utility-type)
+
+[1.13 implements vs extends](#113-implements-vs-extends)
+
+[1.14 keyof](#114-keyof-operator)
+
+[1.15 mapped type](#115-mapped-types)
+
+[1.16 tsconfig 추가 설정](#116-tsconfig-추가-내용)
 
 ---
 
@@ -97,7 +118,7 @@ tsc -w
 
 ```json
 {
-    // 컴파일 시 옵션션
+    // 컴파일 시 옵션
     "comfileOptions" : {
         // 컴파일 되는 곳
         "rootDir" : "./src",
@@ -363,5 +384,281 @@ class Post{
 }
 
 const post: Post = new Post(1, "title 1");
+
+```
+
+
+## 1.11 Generic 정의 및 활용법
+제네릭은 유사한 로직을 가지고 있는 함수나 클래스에서 변수 타입을 지정하지 않고 활용할 수 있는 방법이다. 아래를 참고하자.
+
+```ts
+// function getArrayLength(arr: number[] | string[] | boolean[]): number {
+//     return arr.length
+// }
+
+function getArrayLength<T>(arr: T[]): number {
+    return arr.length
+}
+
+const array1 = [1,2,3];
+const array2 = ["a", "b", "c"]
+const array3 = [true, false, true]
+
+
+// 타입이 바뀔때마다 union으로 추가해줄 수 있지만, 그럼 매번 추가해야됨.
+// 따라서 위처럼 제네릭을 활용해 개발 가능.
+getArrayLength<number>(array1);
+getArrayLength<string>(array2);
+getArrayLength<boolean>(array3);
+
+
+```
+
+- 리액트에서는 ReactComponent를 지정할 떄 Props에 대해서 Generic을 사용해서 적용한다.
+- 또한 useState도 Generic 타입을 이용해서 받는다.
+
+## 1.12 Utility Type
+유틸리티 타입은 굉장히 많기 때문에, 그 중 자주 사용되는 타입 위주로 알아보자.
+
+### (1) Partial
+특정 타입의 부분 집합을 만족하는 타입을 정의할 수 있다.
+- 아래처럼 정의한 interface의 단 하나의 원소라도 가지고 있으면 가능하다.
+- 참고로 빈 것도 사용 가능하다. 
+```ts
+interface Address{
+    email: string;
+    address: string;
+}
+
+const me: Partial<Address> = {};
+const you: Partial<Address> = {email:'john@abc.com'}
+const all: Address = {email: 'john@abc.com', address: 'john'}
+```
+
+### (2) Pick & Omit
+- Pick : 특정 타입에서 지정한 속성을 골라서 선언하는 방식
+- Omit : 특정 타입에서 지정한 속성을 제거한 뒤 선언하는 방식식
+```ts
+interface Todo{
+    title: string;
+    description: string;
+    completed: boolean;
+    createdAt: number;
+}
+
+// Todo에서 title과 completed만 선택해서 만들기.
+type TodoPreview = Pick<Todo, "title" | "completed">;
+
+// Todo에서 description만 제거하기.
+type TodoPreview2 = Omit<Todo, "description">;
+
+const todo:TodoPreview2 = {
+    title: "clean room",
+    completed: false,
+    createdAt: 13414141
+}
+```
+
+### (3) Exclude
+일반 Union 유형을 전달한 다음 두 번째 인수에서 제거할 멤버를 정함.
+- `Exclude<지정한 유니온 타입 변수, 제거할 원소 | ...>` 와 같은 형태로 사용
+
+### (4) Required
+원래 유형이 일부 속성을 선택 사항으로 정의한 경우에도 있도록 강요하는 타입
+
+```ts
+type User = {
+    firstName: string,
+    lastName?: string
+}
+
+let firstUser: User = {
+    firstName: "john"
+}
+
+// 에러 발생. lastName이 선택사항이지만, Required를 쓰면 무조건 필요.
+let secondUser: Required<User> = {
+    firstName: "John"
+}
+
+```
+
+
+### (5) Record<Keys, Type>
+속성 키가 Keys이고 속성 값이 Type인 객체 type을 구성한다.
+
+```ts
+interface CatInfo{
+    age: number;
+    breed: string;
+}
+
+type CatName = "miffy" | "boris" | "mordred";
+
+const cats: Record<CatName, CatInfo> = {
+    miffy: {age: 10, breed: "persian"},
+    boris: {age: 5, breed: 'maine coon'},
+    mordred: {age: 16, breed: "british shorthair"}
+}
+
+```
+
+### (6) ReturnType<T>
+함수 T의 반환 타입으로 구성된 타입을 만든다. 즉 특정 함수의 반환타입을 가져와서 추론하는 형태를 의미한다.
+```ts
+type T0 = ReturnType<() => string>
+type T1 = ReturnType<(s: string)=> void>
+
+function fn(str: string){
+    return str;
+}
+
+// 반환형은 string이니까 a는 string으로 추론
+const a:ReturnType<typeof fn> = 'Hello';
+
+```
+
+## 1.13 Implements vs extends
+Extends는 자바스크립트에서도 사용가능하며 상속의 속성이다. 부모 클래스의 속성이나 메서드를 자식 클래스가 사용하도록 만든다. <br>
+Implements 키워드는 js에서는 사용할 수 없고, 새로운 클래스의 타입 체크를 위해서 사용되며, 그 클래스의 모양을 정의할 때 사용한다. 주로 interface를 상속할 때 많이 사용한다.
+```ts
+class Car{
+    mileage = 0;
+    price = 100;
+    color = 'white'
+
+    drive(){
+        return 'drive'
+    }
+}
+
+// 이건 상속이므로 Car의 속성과 메서드 사용 가능.
+class Ford extends Car{
+
+}
+
+// 이건 오류. Car의 모양만 빌려오므로, Ford도 똑같이 정의되어 있어야 함.
+class Ford implements Car{
+
+}
+```
+
+## 1.14 Keyof operator
+keyof 연산자는 제공된 타입의 키를 추출해 새로운 Union 유형으로 반환한다.
+
+```ts
+interface IUser{
+    name: string;
+    age: number;
+    address: string;
+}
+
+type UserKeys = keyof IUser
+// "name" | "age" | "address"
+
+// 객체는 타입이 아니라서 한 번 변환해주는 과정 필요.
+const user = {
+    name: "string";
+    age: 12;
+    address: "string";
+}
+
+type UserKeys2 = keyof typeof user
+
+enum UserRole{
+    admin,
+    manager
+}
+
+type UserKeys3 = keyof typeof UserRole
+```
+
+## 1.15 Mapped Types
+type이 다른 type에서 파생되고 동기화 상태를 유지해야 하는 경우 특히 유용하다.
+```ts
+
+type DeviceFormatter<T> = {
+    [K in keyof T] : T[K];
+}
+
+type Device = {
+    manufacturer: string;
+    price: number;
+}
+
+// 아래와 같이 변경
+// type DeviceFormatter = {
+//     manufacture : string,
+//     price: number
+// }
+const iphone : DeviceFormatter<Device = {manufacturer: 'apple', price: 1000}>
+```
+
+## 1.16 tsconfig 추가 내용
+앞에서 배웠던 내용을 복습하면서 추가적으로 필요한 내용에 대해 알아보자.
+
+```json
+{
+    // 컴파일 시 옵션
+    "comfileOptions" : {
+        // 컴파일 되는 곳
+        "rootDir" : "./src",
+        // 빌드한 결과물이 나오는 곳
+        "outDir" : "./build/js",
+        // js 적용 버전
+        "target" : "ES6",
+        // 에러가 있을 때는 적용하지 않음.
+        "noEmitOnError" : true,
+        // 컴파일 이후에 사용될 JS 버전(ES6 이후가 ESNext)
+        "module" : "ESNext",
+        // ts 컴파일러가 모듈을 찾는 방법(클래식, 노드 방식 2개)
+        // 예전은 classic, 요즘은 Node가 대부분
+        "moduleResolution" : "Node",
+        // esModule과 CommonJS를 혼용 사용 가능
+        "esModuleInterop": true,
+        // 컴파일 과정에서 사용하는 lib 지정(적지 않으면 기본값 존재.)
+        "lib" : ["ESNext", "DOM"],
+        // ts의 파일의 타입을 엄격히 사용할 것인지 여부
+        "strict" : true,
+        // 기본 URL을 설정.
+        "baseUrl" : "./",
+        // 경로를 치환해서 사용가능하게 됨.
+        "paths" : {
+            "@src/*" : [
+                "src/*"
+            ]
+        }
+        // 모든 소스코드 파일을 모듈화를 강제로 함.
+        "isolatedModules" : true,
+        // 컴파일 시 타입스크립트 주석 모두 제거 설정
+        "removeComments" : true,
+
+        // js는 에러 여부를 확인할 수 없지만, 아래 설정 시 에러 확인 가능
+        "allowJs" : true,
+        "checkJs" : false,
+
+        // ts 컴파일 과정 시 JS 파일과 함께 d.ts 선언 파일 생성
+        // 선언 파일에서 타입들만 따로 관리 가능.
+        "declaration" : true,
+    },
+    // 컴파일할 개별 파일 목록(확장자 이름 필수)
+    "files" : [
+        "node_modules/library/index.ts"
+    ],
+
+    // 컴파일러를 이용해서 변환할 폴더 경로 지정
+    "include": [
+        "src/**/*",
+        "tests/**/*"
+    ],
+
+    // 컴파일러를 이용해서 변환하지 않을 폴더 경로 지정
+    "exclude" : [
+        "node_modules",
+        "dist"
+    ],
+    // 상속해서 사용할 다른 Ts 구성파일 지정
+    "extends" : "main_config.json"
+}
 
 ```
