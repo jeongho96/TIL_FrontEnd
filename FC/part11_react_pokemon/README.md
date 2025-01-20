@@ -85,3 +85,46 @@ Image Lazy Loading 구현 방법
 
 > PokeCard.jsx와 LazyImage.jsx(components) 참조
 
+## 7. 검색 기능 추가하기
+App.jsx에 검색 기능을 추가해보자.
+
+- 검색 기능은 검색 내용을 작성하면 자동으로 검색하고, 검색창이 빈 칸이라면 원래 화면처럼 포켓몬 리스트를 순서대로 보여주는 화면으로 전환한다.
+- 검색창에 변화가 생기면 함수를 동작시키는 걸로 `onChange` 를 활용해 메소드를 적용시켜주자.
+
+```jsx
+const handleSearchInput = async (e) => {
+    setSearchTerm(e.target.value);
+    if(e.target.value.length > 0){
+      try {
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${e.target.value}`);
+        const pokemonData = {
+          url: `https://pokeapi.co/api/v2/pokemon/${response.data.id}`,
+          name: searchTerm
+        }
+        setPokemons([pokemonData])
+      } catch(error){
+        setPokemons([]);
+        console.error(error);
+      }
+      // 만약 검색 내용이 없다면
+    } else{
+      fetchPokeData(true);
+    }
+  }
+
+// ----------------
+<form>
+
+    <input
+    type='text'
+    value={searchTerm}
+    onChange={handleSearchInput}
+    />
+    <button type='submit'>
+    검색
+    </button>
+
+</form>
+
+```
+
