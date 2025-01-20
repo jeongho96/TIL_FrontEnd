@@ -56,4 +56,22 @@ PostCSS는  CSS 코드를 더 효율적으로 작성하고 관리할 수 있도�
 - 코드 가독성 향상 : 브라우저마다 다른 CSS 속성을 브라우저 환경에 맞게 수정해서 작성해줌.(`Autoprefixer`)
 - 최신 CSS 변환 : 최신 방식으로 작성한 코드를 오래된 브라우저에서도 쓸 수 있게 만듬.
 - 이름 변환 : 유니크한 이름으로 변환해 id나 클래스 이름이 겹치지 않도록 변환.
-- css 파
+
+
+## 5. API를 통해 포켓몬 데이터 가져오기
+`Pokeapi.co` 에 접속해서 포켓몬 관련 정보를 API의 형태로 불러와보자. <br>
+
+<a link="Pokeapi.co">포켓몬 API</a>
+
+이번에는 Axios 라는 HTTP 비동기 통신 라이브러리를 통해 사용해보려고 한다. 추후에 Axios, Fetch, Ajax의 차이점에 대해서 학습하면 좋을 듯 하다.
+
+**사용방법**
+- axios 모듈 설치 : `npm install axios --save`
+- react useEffect를 통해 호출
+    - useEffect는 컴포넌트 -> state 순으로 마운트되고 나서 호출된다.
+    - `API => response => state update => component rerender => state`
+```jxs
+
+
+```
+
