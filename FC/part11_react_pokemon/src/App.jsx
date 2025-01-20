@@ -6,28 +6,36 @@ import PokeCard from './components/PokeCard'
 function App() {
 
   const [pokemons, setPokemons] = useState([]);
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(20);
 
-  // limit는 말그대로 가져올 개수, offset은 페이징 시 묶음 단위
-  const url = 'https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0'
 
   useEffect(() =>{
-    fetchPokeData();
+    fetchPokeData(true);
   }, [])
 
   // async await은 비동기통신에서 답이 올때까지 기다리는 것
-  const fetchPokeData = async () => {
+  const fetchPokeData = async (isFirstFetch) => {
     try{
-        const response = await axios.get(url)
-        setPokemons(response.data.results);
+        const offsetValue = isFirstFetch ? 0 : offset + limit;
+        // limit는 말그대로 가져올 개수, offset은 페이징 시 묶음 단위
+        const url = `https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offsetValue}`;
+        const response = await axios.get(url);
+        setPokemons([...pokemons, ...response.data.results]);
+        setOffset(offsetValue);
     } catch(error){
         console.error(error);
     }
   }
 
+
+  
   return (
    <article className='pt-6'>
     <header className='flex flex-col gap-2 w-full px-4 z-50'>
       {/* Input Form 부분 */}
+
+      
     </header>
     <section className='pt-6 flex flex-col justify-content items-center overflow-auto z-0'>
       <div className='flex flex-row flex-wrap gap-[16px] items-center justify-center px-2 max-w-4xl'>
@@ -44,6 +52,15 @@ function App() {
       </div>
 
     </section>
+        <div className='text-center'>
+          <button 
+            onClick={() => fetchPokeData(false)}
+            className='bg-slate-800 px-6 py-2 my-4 txt-base rounded-lg font-bold text-white'>
+            더 보기
+          </button>
+
+        </div>
+
    </article>
   )
 }
