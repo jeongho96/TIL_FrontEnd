@@ -128,3 +128,64 @@ const handleSearchInput = async (e) => {
 
 ```
 
+
+## 8. useDebounce Custom Hooks
+위에서 입력창에 입력한 데이터를 기반으로 검색된 결과를 보여주지만, 모든 입력에 대해서 결과를 보여주게 되면 성능의 저하가 생길 수 있다. 
+
+따라서 일종의 지연을 만들어 API 호출 회수를 줄일 수 있는데, 이를 위해 debounce function을 사용해 사용자가 입력을 지정한 시간동안 멈추게 되면 그 후에 이벤트 처리를 지연시킨다.
+
+아래 코드를 확인해보자.
+
+```js
+import { useState, useEffect } from "react";
+
+export const useDebounce = (value, delay) => {
+
+    const [debounceValue, setDebounceValue] = useState(value);
+
+    // 만약 정해놓은 delay 시간 안에 value, 혹은 delay에 수정이 일어나면
+    // return에 clearTimeout으로 초기화를 해주고, 다시 실행.
+    useEffect(
+        () => {
+            const handler = setTimeout(() => {
+                setDebounceValue(value)
+            }, delay)
+            
+            return () => {
+                clearTimeout(handler)
+            }
+        }, [value, delay]
+    )
+
+
+    return debounceValue
+}
+
+
+// input 태그에 이름 변경만 적용.
+
+<input
+            type='text'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className='text-xs w-[20.5rem] h-6 px-2 py-1 bg-[hsl(214,13%,47%)] rounded-lg text-gray-300 text-center'
+          
+          />
+
+// 검색에 대한 지연 호출(500ms)
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    handleSearchInput(debouncedSearchTerm)
+  }, [debouncedSearchTerm])
+
+
+```
+
+- 검색한 단어(searchTerm)에 대해서 바로 가져오는게 아니라 500ms 이후 가져옴.
+- 그걸 debouncedSearchTerm에 적용. debouncedSearchTerm이 변경될 떄마다 검색 함수 적용.
+
+
+
+## 9. autocomplete 기능
+검색 시 그와 관련된 이름들을 가져올 수 있게 구현하는 것을 의미함. 다만 검색 시에 그런 API를 요청하는 것은 성능 상에 문제도 있고 그런 기능은 찾기 쉽지 않다. 따라서 이 기능을 구현하려면 FE에서 모든 포켓몬의 데이터를 가지고 있어야 한다.
